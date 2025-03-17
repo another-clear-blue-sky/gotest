@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasky-deploy
+spec:
+  selector:
+    matchLabels:
+      app: tasky
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: tasky
+    spec:
+      containers:
+      - name: tasky
+        image: ghcr.io/demo-account-user/tasky:1.0
+        env:
+          - name: MONGODB_URI
+            valueFrom:
+              secretKeyRef:
+                name: tasky-config
+                key: dburi
+          - name: MONGODB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: tasky-config
+                key: dbuser
+          - name: MONGODB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: tasky-config
+                key: dbpass
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: tasky-config
+                key: secretkey
+        ports:
+        - containerPort: 8080
